@@ -5,7 +5,6 @@ This starter is intended to be cloned into future Python + WebUI Docker projects
 ## Project goals
 - Keep internal app port fixed at `3000`.
 - Treat `/config` as the primary persistent path for settings and app state.
-- Treat `/data` as optional storage for outputs/working files.
 - Keep dependencies light and implementation easy to extend.
 - Keep the starter reusable, understandable, and quick to adapt into new projects.
 
@@ -14,10 +13,9 @@ This starter is intended to be cloned into future Python + WebUI Docker projects
 2. Keep `/health` route functional and fast.
 3. Keep the app runnable with `docker compose up --build`.
 4. Keep the UI lightweight (HTML/CSS/JS) unless a framework is explicitly required.
-5. If adding new stateful features, persist to `/config` first unless there is a clear reason to use `/data`.
-6. Preserve Unraid-friendly mappings in `unraid/template.xml` and `README.md`.
-7. Do not rewrite unrelated files or reorganize the repo without a clear reason.
-8. Keep changes scoped, practical, and easy to review.
+5. Preserve Unraid-friendly mappings in `unraid/template.xml` and `README.md`.
+6. Do not rewrite unrelated files or reorganize the repo without a clear reason.
+7. Keep changes scoped, practical, and easy to review.
 
 ## Layout
 - `app/main.py`: app routes and config loading.
