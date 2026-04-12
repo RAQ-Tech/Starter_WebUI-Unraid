@@ -12,10 +12,8 @@ services:
       LOG_LEVEL: ${LOG_LEVEL:-info}
       FEATURE_PLACEHOLDER: ${FEATURE_PLACEHOLDER:-true}
       CONFIG_PATH: /config
-      DATA_PATH: /data
     volumes:
       - ./config:/config
-      - ./data:/data
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:3000/health', timeout=3).read()"]
       interval: 30s
