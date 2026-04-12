@@ -10,7 +10,7 @@ A reusable, Unraid-first Docker starter for Python backend + lightweight web UI 
 
 If you already have Unraid running and Community Applications installed:
 
-1. In Unraid, open **Apps**.
+1. In Unraid, open **Docker**.
 2. Click **Add Container** (or **Install via Template URL** depending on your CA view).
 3. Paste the raw template URL for your repo's `unraid/template.xml`.
 4. Set only two required values:
