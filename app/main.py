@@ -15,7 +15,6 @@ APP_ENV = os.getenv("APP_ENV", "production")
 LOG_LEVEL = os.getenv("LOG_LEVEL", "info")
 FEATURE_PLACEHOLDER = _as_bool(os.getenv("FEATURE_PLACEHOLDER", "true"), True)
 CONFIG_PATH = os.getenv("CONFIG_PATH", "/config")
-DATA_PATH = os.getenv("DATA_PATH", "/data")
 
 app = Flask(__name__, static_folder="static", template_folder="templates")
 
@@ -29,7 +28,6 @@ def home():
         log_level=LOG_LEVEL,
         feature_placeholder=FEATURE_PLACEHOLDER,
         config_path=CONFIG_PATH,
-        data_path=DATA_PATH,
     )
 
 
@@ -54,7 +52,6 @@ def api_info():
             "feature_placeholder_enabled": FEATURE_PLACEHOLDER,
             "paths": {
                 "config": CONFIG_PATH,
-                "data": DATA_PATH,
             },
             "message": "Starter API route is working.",
         }
