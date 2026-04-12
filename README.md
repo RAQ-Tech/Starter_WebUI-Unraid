@@ -1,2 +1,2 @@
-# template_1.0
+# Starter_WebUI-Unraid
 Basic Unraid Template with Web GUI
