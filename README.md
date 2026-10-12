@@ -2,6 +2,9 @@
 
 A reusable, Unraid-first Docker starter for Python backend + lightweight web UI projects.
 
+Current source evidence, qualification checks, and unverified items are recorded in
+the [baseline qualification plan](docs/plans/001-baseline-qualification.md).
+
 > Goal: help you go from opening this GitHub page to seeing a working container WebUI in Unraid as fast as possible.
 
 ---
