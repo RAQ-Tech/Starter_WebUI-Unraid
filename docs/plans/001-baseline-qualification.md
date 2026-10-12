@@ -50,13 +50,14 @@ completion. Task IDs normalize to `task-A01` through `task-A06` in Houston.
   - [x] A01.2 This plan parses with Houston's supported checklist grammar, satisfies its plan-facts schema, and preserves every defined check and dependency.
 
 - [ ] A02 Container and web behavior: the existing application works through the documented local container and browser journeys.
-  <!-- houston-task {"state":"underway","owner":"codex","action":"On a later qualification request, build and start an isolated container from the documented Compose configuration, then exercise the web journeys; preserve existing containers and data.","depends":["A01"]} -->
+  <!-- houston-task {"state":"underway","owner":"codex","action":"On a later qualification request, review the two open Flask advisories against actual behavior, then build and start an isolated container and exercise the web journeys; preserve existing containers and data.","depends":["A01"]} -->
   - [x] A02.1 Source implements the homepage, GET /health, and GET /api/info with environment-driven metadata and a lightweight server-rendered interface.
   - [x] A02.2 Docker and Compose define internal port 3000, configurable host port 8080 by default, and a health probe with a three-second request timeout.
   - [ ] A02.3 The documented docker compose up --build journey succeeds with isolated empty appdata and produces a running container on the selected host port.
   - [ ] A02.4 Runtime homepage, information API, and /health responses are successful; the health response reports healthy and completes within the configured probe timeout.
   - [ ] A02.5 Changed environment values affect the runtime metadata and example feature flag after container recreation; placeholder logging is described accurately.
   - [ ] A02.6 The actual homepage is inspected in desktop and narrow browser views for readable layout and usable content; a static Healthy label is not used as live-health evidence.
+  - [ ] A02.7 The two open low-severity Flask advisories are reviewed against actual starter behavior and receive an evidenced fix or documented disposition before release qualification is claimed.
 
 - [ ] A03 Storage boundary and persistence: /config is usable durable storage, and claims match the application's actual state behavior.
   <!-- houston-task {"state":"underway","owner":"codex","action":"On a later qualification request, verify /config write access and a disposable marker surviving container recreation in isolated appdata; do not claim saved application settings that the starter does not implement.","depends":["A02"]} -->
@@ -94,6 +95,7 @@ completion. Task IDs normalize to `task-A01` through `task-A06` in Houston.
 | Installation source | `README.md` and `unraid/template.xml` provide reusable installation instructions and generic port, path, and environment mappings. | Template identity and image links remain placeholders. No actual DockerMan installation was inspected. |
 | Assets | A PNG exists under `unraid/`; the template points to a generic `docs/icon.png` URL, and no favicon is wired into the homepage. | An existing PNG or URL string does not establish rendered icon/favicon behavior. |
 | Historical automation | [Publish container image run 32516564663](https://github.com/RAQ-Tech/Starter_WebUI-Unraid/actions/runs/32516564663) was observed completed with success for the inspected app-source baseline. The workflow builds and pushes; it defines no browser, health, or persistence tests. | This is historical build/push evidence, not a registry pull test, current deployment verification, or a result for later documentation commits. |
+| Dependency alerts | GitHub's authenticated alerts API reports two open low-severity Flask advisories against `app/requirements.txt`: [GHSA-4grg-w6v8-c28g](https://github.com/advisories/GHSA-4grg-w6v8-c28g), with first patched version 3.1.1, and [GHSA-68rp-wp8r-4726](https://github.com/advisories/GHSA-68rp-wp8r-4726), with first patched version 3.1.3. | Applicability to this starter's actual behavior has not been assessed. No dependency change or remediation is claimed. |
 | Plan validation | The complete checklist is normalized using Houston's local parser and checked against its PlanFacts schema before reporting. | Normalization validates reporting structure; it does not qualify the app. |
 
 ## Unknowns, gaps, and sequence
@@ -104,6 +106,10 @@ restart/recreation persistence, usable image tag/digest, adapted Unraid installa
 deployment identity/current health, and owner acceptance remain unverified. No
 deployment target, private credentials, or installation-specific values are
 included or inferred. Existing repository visibility is preserved.
+
+Two open low-severity Flask advisories are confirmed in GitHub. Their practical
+impact and appropriate disposition remain unassessed; review is included in A02
+for a later qualification request. No app or dependency change is authorized now.
 
 Source gaps are explicit: no saved-settings feature, no wired favicon, and generic
 Unraid resource links. Generic links are intentional scaffold values requiring
