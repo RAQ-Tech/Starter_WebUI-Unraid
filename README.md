@@ -183,6 +183,10 @@ Health endpoint test:
 
 ```text
 .
+├── .github/
+│   ├── dependabot.yml
+│   └── workflows/
+│       └── publish-ghcr.yml
 ├── AGENTS.md
 ├── Dockerfile
 ├── .dockerignore
@@ -221,6 +225,12 @@ Health endpoint test:
 
 - Do not hardcode secrets in source files.
 - Pass secrets using environment variables or external secret managers.
+
+## Keeping versions current
+
+- The image is built on the latest stable Python slim base image, and `app/requirements.txt` pins the latest releases.
+- `.github/dependabot.yml` opens weekly pull requests for the base image, Python packages, and GitHub Actions. The publish workflow builds and smoke-tests each pull request (`/health`, `/api/info`, `/`, and the image healthcheck) without pushing an image.
+- Hold a version back only for a specific reason, written beside the pin along with what would allow it to move.
 
 ## Included starter behavior
 

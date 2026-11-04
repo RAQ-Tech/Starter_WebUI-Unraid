@@ -4,24 +4,63 @@ on:
   push:
     branches: ["main"]
     tags: ["v*"]
+  pull_request:
+    branches: ["main"]
   workflow_dispatch:
 
 permissions:
   contents: read
   packages: write
 
+env:
+  TEST_TAG: starter-webui-app:smoke-test
+
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
+
+      # Build once into the local Docker engine and prove the container starts
+      # and answers before anything is pushed. Pull requests (including
+      # Dependabot base-image and dependency updates) stop after this check.
+      - name: Build image for smoke test
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          load: true
+          tags: ${{ env.TEST_TAG }}
+
+      - name: Smoke test container
+        run: |
+          set -euo pipefail
+          docker run --rm "$TEST_TAG" python --version
+          mkdir -p "$RUNNER_TEMP/smoke-config"
+          docker run -d --name smoke -p 127.0.0.1:3000:3000 \
+            -v "$RUNNER_TEMP/smoke-config:/config" "$TEST_TAG"
+          trap 'docker logs smoke || true; docker rm -f smoke >/dev/null 2>&1 || true' EXIT
+          # Wait up to 30 seconds for the server to start listening.
+          for _ in $(seq 1 30); do
+            curl -fsS http://127.0.0.1:3000/health >/dev/null 2>&1 && break
+            sleep 1
+          done
+          curl -fsS http://127.0.0.1:3000/health | tee "$RUNNER_TEMP/health.json"; echo
+          python3 -c 'import json,sys; assert json.load(open(sys.argv[1]))["status"] == "healthy"' "$RUNNER_TEMP/health.json"
+          curl -fsS http://127.0.0.1:3000/api/info | python3 -m json.tool
+          curl -fsS -o /dev/null http://127.0.0.1:3000/
+          curl -fsS -o /dev/null http://127.0.0.1:3000/static/styles.css
+          # Run the image's own HEALTHCHECK command inside the container.
+          probe="$(docker inspect -f '{{index .Config.Healthcheck.Test 1}}' "$TEST_TAG")"
+          docker exec smoke sh -c "$probe"
+          echo "Smoke test passed"
 
       - name: Log in to GHCR
-        uses: docker/login-action@v3
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -29,7 +68,7 @@ jobs:
 
       - name: Extract Docker metadata
         id: meta
-        uses: docker/metadata-action@v5
+        uses: docker/metadata-action@v6
         with:
           images: ghcr.io/${{ github.repository_owner }}/starter_webui-unraid
           tags: |
@@ -39,7 +78,8 @@ jobs:
             type=sha
 
       - name: Build and push
-        uses: docker/build-push-action@v6
+        if: github.event_name != 'pull_request'
+        uses: docker/build-push-action@v7
         with:
           context: .
           push: true

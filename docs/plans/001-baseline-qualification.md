@@ -50,14 +50,14 @@ completion. Task IDs normalize to `task-A01` through `task-A06` in Houston.
   - [x] A01.2 This plan parses with Houston's supported checklist grammar, satisfies its plan-facts schema, and preserves every defined check and dependency.
 
 - [ ] A02 Container and web behavior: the existing application works through the documented local container and browser journeys.
-  <!-- houston-task {"state":"underway","owner":"codex","action":"On a later qualification request, review the two open Flask advisories against actual behavior, then build and start an isolated container and exercise the web journeys; preserve existing containers and data.","depends":["A01"]} -->
+  <!-- houston-task {"state":"underway","owner":"codex","action":"On a later qualification request, build and start an isolated container and exercise the web journeys; preserve existing containers and data.","depends":["A01"]} -->
   - [x] A02.1 Source implements the homepage, GET /health, and GET /api/info with environment-driven metadata and a lightweight server-rendered interface.
   - [x] A02.2 Docker and Compose define internal port 3000, configurable host port 8080 by default, and a health probe with a three-second request timeout.
   - [ ] A02.3 The documented docker compose up --build journey succeeds with isolated empty appdata and produces a running container on the selected host port.
   - [ ] A02.4 Runtime homepage, information API, and /health responses are successful; the health response reports healthy and completes within the configured probe timeout.
   - [ ] A02.5 Changed environment values affect the runtime metadata and example feature flag after container recreation; placeholder logging is described accurately.
   - [ ] A02.6 The actual homepage is inspected in desktop and narrow browser views for readable layout and usable content; a static Healthy label is not used as live-health evidence.
-  - [ ] A02.7 The two open low-severity Flask advisories are reviewed against actual starter behavior and receive an evidenced fix or documented disposition before release qualification is claimed.
+  - [x] A02.7 The two open low-severity Flask advisories are reviewed against actual starter behavior and receive an evidenced fix or documented disposition before release qualification is claimed.
 
 - [ ] A03 Storage boundary and persistence: /config is usable durable storage, and claims match the application's actual state behavior.
   <!-- houston-task {"state":"underway","owner":"codex","action":"On a later qualification request, verify /config write access and a disposable marker surviving container recreation in isolated appdata; do not claim saved application settings that the starter does not implement.","depends":["A02"]} -->
@@ -89,13 +89,14 @@ completion. Task IDs normalize to `task-A01` through `task-A06` in Houston.
 | Evidence | Observation | Limit |
 |---|---|---|
 | Source baseline | Inspected application-source baseline is `6479a8c70ebc0f2a391174fe7fb78caab79b5d6c`. The previous local revision `17b1a6b5fe409f06a7521b8c01de8e010a991753` has the identical repository tree; the intervening icon addition was reverted. | This identifies inspected source, not a deployed version. |
-| Web source | `app/main.py`, `app/templates/index.html`, and `app/static/styles.css` contain three routes and a responsive CSS shell. `app/requirements.txt` pins Flask 3.1.0. | No runtime or visual browser checks were executed for this request. The homepage's Healthy wording is static. |
-| Container source | `Dockerfile` uses Python 3.12-slim and port 3000; `docker-compose.yml` maps the host port and /config and defines a health probe. | No build, start, empty-appdata, writable-volume, or recreation test was executed for this request. |
+| Web source | `app/main.py`, `app/templates/index.html`, and `app/static/styles.css` contain three routes and a responsive CSS shell. `app/requirements.txt` pins Flask 3.1.3 (3.1.0 until 2026-11-04). | No runtime or visual browser checks were executed for this request. The homepage's Healthy wording is static. |
+| Container source | `Dockerfile` uses Python 3.15-slim (3.12-slim until 2026-11-04) and port 3000; `docker-compose.yml` maps the host port and /config and defines a health probe. | No build, start, empty-appdata, writable-volume, or recreation test was executed for this request. |
 | Storage boundary | `CONFIG_PATH` is environment metadata. The inspected app does not save or reload settings/state. | The README's broad settings-persistence wording must not be treated as an implemented capability. |
 | Installation source | `README.md` and `unraid/template.xml` provide reusable installation instructions and generic port, path, and environment mappings. | Template identity and image links remain placeholders. No actual DockerMan installation was inspected. |
 | Assets | A PNG exists under `unraid/`; the template points to a generic `docs/icon.png` URL, and no favicon is wired into the homepage. | An existing PNG or URL string does not establish rendered icon/favicon behavior. |
-| Historical automation | [Publish container image run 32516564663](https://github.com/RAQ-Tech/Starter_WebUI-Unraid/actions/runs/32516564663) was observed completed with success for the inspected app-source baseline. The workflow builds and pushes; it defines no browser, health, or persistence tests. | This is historical build/push evidence, not a registry pull test, current deployment verification, or a result for later documentation commits. |
-| Dependency alerts | GitHub's authenticated alerts API reports two open low-severity Flask advisories against `app/requirements.txt`: [GHSA-4grg-w6v8-c28g](https://github.com/advisories/GHSA-4grg-w6v8-c28g), with first patched version 3.1.1, and [GHSA-68rp-wp8r-4726](https://github.com/advisories/GHSA-68rp-wp8r-4726), with first patched version 3.1.3. | Applicability to this starter's actual behavior has not been assessed. No dependency change or remediation is claimed. |
+| Historical automation | [Publish container image run 32516564663](https://github.com/RAQ-Tech/Starter_WebUI-Unraid/actions/runs/32516564663) was observed completed with success for the inspected app-source baseline. At that revision the workflow only built and pushed; it defined no browser, health, or persistence tests. | This is historical build/push evidence, not a registry pull test, current deployment verification, or a result for later documentation commits. |
+| Dependency alerts | GitHub's authenticated alerts API reports two open low-severity Flask advisories against `app/requirements.txt`: [GHSA-4grg-w6v8-c28g](https://github.com/advisories/GHSA-4grg-w6v8-c28g), with first patched version 3.1.1, and [GHSA-68rp-wp8r-4726](https://github.com/advisories/GHSA-68rp-wp8r-4726), with first patched version 3.1.3. On 2026-11-04 Flask moved to 3.1.3, which is at or above both patched versions. Review: the starter sets no `SECRET_KEY` and never uses `session`, so neither the signing-key fallback nor the missing `Vary: Cookie` issue affected its behavior. | GitHub closes alerts after it rescans the pushed manifest; check the alert state rather than assuming it. |
+| Version sweep (2026-11-04) | Under the owner's 2026-11-04 rule (use the latest stable release unless a reason is recorded), pins with no recorded reason moved: base image `python:3.12-slim` to `python:3.15-slim` (Debian 13 trixie); Flask `3.1.0` to `3.1.3`; `actions/checkout` v4 to v7, `docker/setup-buildx-action` v3 to v4, `docker/login-action` v3 to v4, `docker/metadata-action` v5 to v6, `docker/build-push-action` v6 to v7. Nothing was held back. Added `.github/dependabot.yml` (pip in `/app`, docker, github-actions; weekly). The publish workflow now also runs on pull requests to `main`, builds the image, and smoke-tests the running container (`/health` reports healthy, `/api/info`, `/`, static CSS, and the image's own HEALTHCHECK command) before any push; pull requests never log in or push. A local run on Python 3.15.2 in a fresh environment installed Flask 3.1.3 with Werkzeug 3.1.9, passed `pip check`, and passed `/health`, `/api/info`, `/`, static CSS, and 404 checks through Flask's test client. | The local check used no container. The container build and smoke test run in GitHub Actions; their result belongs to that run. Neither is a Compose, empty-appdata, persistence, or Unraid installation check, so A02.3 to A02.6 and later tasks stay open. |
 | Plan validation | The complete checklist is normalized using Houston's local parser and checked against its PlanFacts schema before reporting. | Normalization validates reporting structure; it does not qualify the app. |
 
 ## Unknowns, gaps, and sequence
@@ -107,9 +108,9 @@ deployment identity/current health, and owner acceptance remain unverified. No
 deployment target, private credentials, or installation-specific values are
 included or inferred. Existing repository visibility is preserved.
 
-Two open low-severity Flask advisories are confirmed in GitHub. Their practical
-impact and appropriate disposition remain unassessed; review is included in A02
-for a later qualification request. No app or dependency change is authorized now.
+The two low-severity Flask advisories were reviewed and fixed on 2026-11-04 by
+moving Flask to 3.1.3 (see the version sweep row). Neither affected the starter's
+behavior, because it uses no signing key or session.
 
 Source gaps are explicit: no saved-settings feature, no wired favicon, and generic
 Unraid resource links. Generic links are intentional scaffold values requiring

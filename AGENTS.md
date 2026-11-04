@@ -16,6 +16,7 @@ This starter is intended to be cloned into future Python + WebUI Docker projects
 5. Preserve Unraid-friendly mappings in `unraid/template.xml` and `README.md`.
 6. Do not rewrite unrelated files or reorganize the repo without a clear reason.
 7. Keep changes scoped, practical, and easy to review.
+8. Keep the Python base image, pinned dependencies, and GitHub Actions on their latest stable releases. Hold one back only for a specific recorded reason written beside the pin, with what would allow it to move.
 
 ## Layout
 - `app/main.py`: app routes and config loading.
@@ -48,6 +49,7 @@ When finishing work:
 - Update Unraid metadata (template URL, icon, project links).
 - Keep internal container port at `3000`.
 - Map `/config` to the Unraid appdata location for the new app name.
+- Keep `.github/dependabot.yml` so base-image, pip, and GitHub Actions updates keep arriving as pull requests; check that the base image and pins are still the latest stable releases when cloning.
 
 ## Definition of done
 A task is complete when:
